@@ -1,10 +1,10 @@
 import { TestWorkflowEnvironment } from '@temporalio/testing';
 import { after, before, it } from 'mocha';
 import { Worker } from '@temporalio/worker';
-import { example } from '../workflows';
+import { updatePriceStreamWorkflow } from '../workflows';
 import assert from 'assert';
 
-describe('Example workflow with mocks', () => {
+describe('Update price workflow with mocks', () => {
   let testEnv: TestWorkflowEnvironment;
 
   before(async () => {
@@ -24,17 +24,19 @@ describe('Example workflow with mocks', () => {
       taskQueue,
       workflowsPath: require.resolve('../workflows'),
       activities: {
-        greet: async () => 'Hello, Temporal!',
+        updatePriceStream: async (_ticker: string, _price: number) => {
+          await Promise.resolve();
+        },
       },
     });
 
     const result = await worker.runUntil(
-      client.workflow.execute(example, {
-        args: ['Temporal'],
+      client.workflow.execute(updatePriceStreamWorkflow, {
+        args: ['TEST_AAPL', 100],
         workflowId: 'test',
         taskQueue,
       }),
     );
-    assert.equal(result, 'Hello, Temporal!');
+    assert.equal(result, undefined);
   });
 });

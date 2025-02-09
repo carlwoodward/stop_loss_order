@@ -10,8 +10,10 @@
     "lint": "eslint .",
     "start": "ts-node src/worker.ts",
     "start.watch": "nodemon src/worker.ts",
-    "workflow": "ts-node src/client.ts",
-    "test": "mocha --exit --require ts-node/register --require source-map-support/register src/mocha/*.test.ts"
+    "workflow": "ts-node src/updatePriceStreamClient.ts",
+    "placeStopOrder": "ts-node src/placeStopOrderClient.ts",
+    "test": "mocha --exit --require ts-node/register --require source-map-support/register src/mocha/*.test.ts",
+    "cov": "nyc --reporter=text mocha --exit --require ts-node/register --require source-map-support/register src/mocha/*.test.ts"
   },
   "nodemonConfig": {
     "execMap": {
@@ -27,6 +29,7 @@
     "@temporalio/client": "^1.11.6",
     "@temporalio/worker": "^1.11.6",
     "@temporalio/workflow": "^1.11.6",
+    "ioredis": "^5.5.0",
     "nanoid": "3.x"
   },
   "devDependencies": {
@@ -41,6 +44,7 @@
     "eslint-plugin-deprecation": "^3.0.0",
     "mocha": "8.x",
     "nodemon": "^3.1.7",
+    "nyc": "^17.1.0",
     "prettier": "^3.4.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"

@@ -16,3 +16,11 @@ The Workflow should return:
 ```bash
 Hello, Temporal!
 ```
+
+# Thinking
+
+1. Create the pub sub stream.
+2. Create a workflow that updates the price stream for the security, takes the ticker and the price as a float.
+3. Create a workflow that accepts the ticker and the stop-loss price.
+4. Create a signal for cancelling the order.
+5. Create sell order activity that prints sold, unsubscribes and ends the workflow.
