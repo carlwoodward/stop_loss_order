@@ -1,12 +1,14 @@
 # Stop Loss Order
 
-![Overview](overview.png "Program overview")
-
 - Using Temporal to manage durable workflow for managing a stream of security price changes and managing stop loss orders.
 - Temporal was picked for a strong learning opportunity.
 - A redis stream is used store security price updates.
 - Updates to securities are pulled from redis stream rather than using redis pubsub due to challenges with orchestration in Temporal and the need to implement fan out functionality outside of temporal workflow.
 - This implementation wouldn't scale to millions of orders, instead it would be implemented with a more scalable queue technology.
+
+The diagram below outlines how the system works.
+
+![Overview](overview.png "Program overview")
 
 # Usage
 
@@ -43,7 +45,6 @@ docker run --rm $(docker build -q .) pnpm placeStopOrder TICKER 1000
 
 - TICKER can be able string
 - 1000 is an example price
-- 100 is an example quantity
 
 The following is logged when an order is placed:
 
