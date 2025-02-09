@@ -3,7 +3,9 @@ import { updatePriceStreamWorkflow } from './workflows';
 import { nanoid } from 'nanoid';
 
 async function run() {
-  const connection = await Connection.connect({ address: 'localhost:7233' });
+  const connection = await Connection.connect({
+    address: process.env.TEMPORAL_URL ?? 'localhost:7233',
+  });
   const client = new Client({
     connection,
   });

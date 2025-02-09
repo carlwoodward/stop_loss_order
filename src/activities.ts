@@ -3,6 +3,14 @@ import { Context, heartbeat, log } from '@temporalio/activity';
 
 const INITIAL_STREAM_EVENT_ID = '$';
 
+function conn(): Redis {
+  if (process.env.REDIS_URL) {
+    return new Redis(process.env.REDIS_URL);
+  } else {
+    return new Redis();
+  }
+}
+
 //
 // Read price changes from Price Stream.
 //
@@ -44,7 +52,7 @@ export const createActivities = () => ({
   // @param {string} price - the current price of the security
   //
   async updatePriceStream(name: string, price: number): Promise<void> {
-    const redis = new Redis();
+    const redis = conn();
     await redis.xadd(name, '*', 'price', price);
   },
 
@@ -59,7 +67,7 @@ export const createActivities = () => ({
   //
   async placeStopLossOrder(ticker: string, price: number, quantity: number): Promise<void> {
     let id = INITIAL_STREAM_EVENT_ID;
-    const redis = new Redis();
+    const redis = conn();
     for (;;) {
       if (Context.current().cancellationSignal.aborted) {
         log.info('!!! CANCELLED !!!');

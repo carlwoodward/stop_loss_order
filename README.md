@@ -1,26 +1,58 @@
-# Hello World
+# Stop Loss Order
 
-This is the default project that is scaffolded out when you run `npx @temporalio/create@latest ./myfolder`.
+![Overview](overview.png "Program overview")
 
-The [Hello World Tutorial](https://learn.temporal.io/getting_started/typescript/hello_world_in_typescript/) walks through the code in this sample.
+- Using Temporal to manage durable workflow for managing a stream of security price changes and managing stop loss orders.
+- Temporal was picked for a strong learning opportunity.
+- A redis stream is used store security price updates.
+- Updates to securities are pulled from redis stream rather than using redis pubsub due to challenges with orchestration in Temporal and the need to implement fan out functionality outside of temporal workflow.
+- This implementation wouldn't scale to millions of orders, instead it would be implemented with a more scalable queue technology.
 
-### Running this sample
+# Usage
 
-1. `temporal server start-dev` to start [Temporal Server](https://github.com/temporalio/cli/#installation).
-1. `npm install` to install dependencies.
-1. `npm run start.watch` to start the Worker.
-1. In another shell, `npm run workflow` to run the Workflow Client.
+NOTE: tested using podman.
 
-The Workflow should return:
+Start Temporal and Redis:
 
-```bash
-Hello, Temporal!
+```
+cd docker-compose
+docker-compose up
 ```
 
-# Thinking
+Start worker:
 
-1. Create the pub sub stream.
-2. Create a workflow that updates the price stream for the security, takes the ticker and the price as a float.
-3. Create a workflow that accepts the ticker and the stop-loss price.
-4. Create a signal for cancelling the order.
-5. Create sell order activity that prints sold, unsubscribes and ends the workflow.
+```
+docker run --rm $(docker build -q .) pnpm start
+```
+
+Setup stop loss order:
+
+```
+docker run --rm $(docker build -q .) pnpm placeStopOrder TICKER 1000 100
+```
+
+- TICKER can be able string
+- 1000 is an example price
+- 100 is an example quantity
+
+Update price:
+
+```
+docker run --rm $(docker build -q .) pnpm placeStopOrder TICKER 1000
+```
+
+- TICKER can be able string
+- 1000 is an example price
+- 100 is an example quantity
+
+The following is logged when an order is placed:
+
+```
+**** PLACE SELL ORDER ****
+```
+
+# Key file location
+
+- `src/activities.ts` contains the core functionality for the application.
+- `updatePriceStream` appends to the stream.
+- `placeStopLossOrder` monitors for changes to the price and applies logic to sell when it drop below given point.

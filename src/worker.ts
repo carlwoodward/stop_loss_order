@@ -7,7 +7,7 @@ async function run() {
   // Worker code uses `@temporalio/worker.NativeConnection`.
   // (But in your application code it's `@temporalio/client.Connection`.)
   const connection = await NativeConnection.connect({
-    address: 'localhost:7233',
+    address: process.env.TEMPORAL_URL ?? 'localhost:7233',
     // TLS and gRPC metadata configuration goes here.
   });
   try {
