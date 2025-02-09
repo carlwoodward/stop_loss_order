@@ -5,6 +5,7 @@
 - A redis stream is used store security price updates.
 - Updates to securities are pulled from redis stream rather than using redis pubsub due to challenges with orchestration in Temporal and the need to implement fan out functionality outside of temporal workflow.
 - This implementation wouldn't scale to millions of orders, instead it would be implemented with a more scalable queue technology.
+- Stop loss orders can be cancelled through the Temporal UI.
 
 The diagram below outlines how the system works.
 
